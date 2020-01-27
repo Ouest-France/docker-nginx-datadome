@@ -37,4 +37,4 @@ rm -rf ${tmp_dir}
 FROM debian:stretch
 RUN apt update && apt install nginx -y && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_*.so /etc/nginx/modules/
-USER nginx
+RUN useradd -ms /bin/bash  nginx
