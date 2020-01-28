@@ -2,8 +2,8 @@ FROM centos:7 as builder
 ARG DATADOME_VERSION="1.16.1-2.36~94"
 WORKDIR /tmp
 COPY ./asset/nginx.repo /etc/yum.repos.d/nginx.repo
-RUN yum install nginx -y
-RUN yum install iperl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel pcre-devel libxml2 libxml2-devel gd gd-devel GeoIP GeoIP-devel gcc make openssl-devel -y
+RUN yum install nginx -y && yum clean all
+RUN yum install iperl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel pcre-devel libxml2 libxml2-devel gd gd-devel GeoIP GeoIP-devel gcc make openssl-devel -y && yum clean all
 RUN tmp_dir=$(mktemp -d -t datadome-XXXXXXXXXX) && \
 
 # Get the Nginx version in use
@@ -38,6 +38,5 @@ cp ${tmp_dir}/nginx-${nginx_version}/objs/ngx_http_data_dome_*.so /etc/nginx/mod
 rm -rf ${tmp_dir}
 FROM centos:7
 COPY ./asset/nginx.repo /etc/yum.repos.d/nginx.repo
-RUN yum install nginx -y
+RUN yum install nginx -y && yum clean all
 COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_*.so /etc/nginx/modules/
-#RUN useradd -ms /bin/bash  nginx
