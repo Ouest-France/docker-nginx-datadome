@@ -1,7 +1,9 @@
-FROM debian:stretch as builder
+FROM centos:7 as builder
 ARG DATADOME_VERSION="1.16.1-2.36~94"
 WORKDIR /tmp
-RUN apt update && apt install libpcre3 libpcre3-dev gcc curl make gnupg2 libssl-dev zlib1g-dev libxslt1-dev libgd-dev  libgeoip-dev nginx -y && rm -rf /var/lib/apt/lists/*
+COPY ./asset/nginx.repo /etc/yum.repos.d/nginx.repo
+RUN yum install nginx -y
+RUN yum install iperl perl-devel perl-ExtUtils-Embed libxslt libxslt-devel pcre-devel libxml2 libxml2-devel gd gd-devel GeoIP GeoIP-devel gcc make openssl-devel -y
 RUN tmp_dir=$(mktemp -d -t datadome-XXXXXXXXXX) && \
 
 # Get the Nginx version in use
@@ -34,7 +36,8 @@ mkdir -p /etc/nginx/modules && \
 # Copy the .so modules to nginx configuration
 cp ${tmp_dir}/nginx-${nginx_version}/objs/ngx_http_data_dome_*.so /etc/nginx/modules/ && \
 rm -rf ${tmp_dir}
-FROM debian:stretch
-RUN apt update && apt install nginx -y && rm -rf /var/lib/apt/lists/*
+FROM centos:7
+COPY ./asset/nginx.repo /etc/yum.repos.d/nginx.repo
+RUN yum install nginx -y
 COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_*.so /etc/nginx/modules/
-RUN useradd -ms /bin/bash  nginx
+#RUN useradd -ms /bin/bash  nginx
