@@ -39,4 +39,6 @@ rm -rf ${tmp_dir}
 FROM centos:7
 COPY ./asset/nginx.repo /etc/yum.repos.d/nginx.repo
 RUN yum install nginx -y && yum clean all
-COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_*.so /etc/nginx/modules/
+COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_auth_module.so /etc/nginx/modules/
+COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_shield_module.so /etc/nginx/modules/
+COPY --from=builder /etc/nginx/modules/ngx_http_data_dome_upstream_dynamic_servers_module.so /etc/nginx/modules/
